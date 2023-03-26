@@ -1,4 +1,8 @@
 import pycardano
+from blockfrost import ApiUrls
+from pycardano import BlockFrostChainContext
+
+GLOBAL_network = pycardano.Network.TESTNET
 
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
@@ -33,5 +37,12 @@ def get_address(signing_key_path="./keys/payment.skey", verification_key_path=".
                                             verification_key_path=verification_key_path)
     network = pycardano.Network.TESTNET
     address = pycardano.Address(payment_part=payment_verification_key.hash(), network=network)
+    # address = pycardano.Address.from_primitive(address.payment_part)
     print(f'Address: {address}')
+    return address
+
+
+def get_address_utxos(address):
+    context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
+    return context
 
