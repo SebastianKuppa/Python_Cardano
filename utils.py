@@ -44,5 +44,9 @@ def get_address(signing_key_path="./keys/payment.skey", verification_key_path=".
 
 def get_address_utxos(address):
     context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
-    return context
+    utxos = context.api.address_utxos(address)
+    amount_lovelace = 0
+    for utxo in utxos:
+        amount_lovelace += int(utxo.amount[0].quantity)
+    return amount_lovelace
 
