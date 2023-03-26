@@ -1,6 +1,16 @@
 import pycardano
 from blockfrost import ApiUrls
-from pycardano import BlockFrostChainContext
+from pycardano import (
+    PaymentSigningKey,
+    BlockFrostChainContext,
+    PaymentVerificationKey,
+    Transaction,
+    TransactionBody,
+    TransactionInput,
+    TransactionOutput,
+    TransactionWitnessSet,
+    VerificationKeyWitness,
+)
 
 GLOBAL_network = pycardano.Network.TESTNET
 
@@ -37,16 +47,39 @@ def get_address(signing_key_path="./keys/payment.skey", verification_key_path=".
                                             verification_key_path=verification_key_path)
     network = pycardano.Network.TESTNET
     address = pycardano.Address(payment_part=payment_verification_key.hash(), network=network)
-    # address = pycardano.Address.from_primitive(address.payment_part)
-    # print(f'Address: {address}')
+
     return address
 
 
-def get_lovelace_amount_from_address(address):
+def calc_ada_from_lovelace(amount_lovelace):
+    return float(amount_lovelace)/1000000
+
+
+def get_address_utxos(address):
+    # API Key for my Google Account on Blockfrost.io
     context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
-    utxos = context.api.address_utxos(address)
+    # get utxos for address
+    return context.api.address_utxos(address)
+
+
+def get_lovelace_amount_from_address(address):
+    # get utxos for address
+    utxos = get_address_utxos(address)
+
+    # loop over all utxos and add the quantity of lovelace together
     amount_lovelace = 0
     for utxo in utxos:
         amount_lovelace += int(utxo.amount[0].quantity)
+    print(f"The address: {address} has currently {calc_ada_from_lovelace(amount_lovelace)} ADA ({amount_lovelace} lovelace).")
+
     return amount_lovelace
 
+
+def raw_transaction(address):
+    # get utxos for address
+    utxos = get_address_utxos(address)
+    tx_id = utxos[0].tx_hash
+    tx_in = TransactionInput.from_primitive([tx_id, 0])
+    output1 = TransactionOutput.from_primitive([address, 100000000000])
+    output2 = TransactionOutput.from_primitive([address, 799999834103])
+    print('test')
