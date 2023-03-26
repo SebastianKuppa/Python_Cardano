@@ -38,11 +38,11 @@ def get_address(signing_key_path="./keys/payment.skey", verification_key_path=".
     network = pycardano.Network.TESTNET
     address = pycardano.Address(payment_part=payment_verification_key.hash(), network=network)
     # address = pycardano.Address.from_primitive(address.payment_part)
-    print(f'Address: {address}')
+    # print(f'Address: {address}')
     return address
 
 
-def get_address_utxos(address):
+def get_lovelace_amount_from_address(address):
     context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
     utxos = context.api.address_utxos(address)
     amount_lovelace = 0

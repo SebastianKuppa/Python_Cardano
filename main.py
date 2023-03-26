@@ -7,4 +7,5 @@ if __name__ == '__main__':
 
     # print the address of keys in ./keys folder
     testnet_address = utils.get_address()
-    utils.get_address_utxos(testnet_address)
+    amount_lovelaces = utils.get_lovelace_amount_from_address(testnet_address)
+    print(f"The address: {testnet_address} has currently {amount_lovelaces} lovelaces.")
