@@ -6,6 +6,7 @@ from pycardano import (
     PaymentVerificationKey,
     Transaction,
     TransactionBody,
+    TransactionBuilder,
     TransactionInput,
     TransactionOutput,
     TransactionWitnessSet,
@@ -13,6 +14,8 @@ from pycardano import (
 )
 
 GLOBAL_network = pycardano.Network.TESTNET
+# API Key for my Google Account on Blockfrost.io
+GLOBAL_context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
 
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
@@ -56,10 +59,8 @@ def calc_ada_from_lovelace(amount_lovelace):
 
 
 def get_address_utxos(address):
-    # API Key for my Google Account on Blockfrost.io
-    context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
     # get utxos for address
-    return context.api.address_utxos(address)
+    return GLOBAL_context.api.address_utxos(address)
 
 
 def get_lovelace_amount_from_address(address):
@@ -75,11 +76,13 @@ def get_lovelace_amount_from_address(address):
     return amount_lovelace
 
 
-def raw_transaction(address):
-    # get utxos for address
-    utxos = get_address_utxos(address)
-    tx_id = utxos[0].tx_hash
-    tx_in = TransactionInput.from_primitive([tx_id, 0])
-    output1 = TransactionOutput.from_primitive([address, 100000000000])
-    output2 = TransactionOutput.from_primitive([address, 799999834103])
-    print('test')
+def build_transaction(address):
+    sk, vk = load_keys()
+    builder = TransactionBuilder(GLOBAL_context)
+    builder.add_input_address(address=address)
+    builder.add_output(TransactionOutput.from_primitive([str(address), 1]))
+    # builder.ttl = 3600
+    # builder.reference_inputs.add(utxo)
+    signed_tx = builder.build_and_sign([sk], address)
+    GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print(f'signed tx_id: ')
