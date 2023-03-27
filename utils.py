@@ -78,11 +78,13 @@ def get_lovelace_amount_from_address(address):
 
 def build_transaction(address):
     sk, vk = load_keys()
+    utxos = GLOBAL_context.utxos(str(address))
     builder = TransactionBuilder(GLOBAL_context)
     builder.add_input_address(address=address)
-    builder.add_output(TransactionOutput.from_primitive([str(address), 1]))
-    # builder.ttl = 3600
-    # builder.reference_inputs.add(utxo)
+    builder.add_output(TransactionOutput.from_primitive([str(address), 100_000_000]))
+    builder.ttl = 15235233
+    # builder.reference_inputs.add(utxos[0])
     signed_tx = builder.build_and_sign([sk], address)
+    print(f'signed tx_id: {signed_tx.id}')
+    tx_to_cbor = signed_tx.to_cbor()
     GLOBAL_context.submit_tx(signed_tx.to_cbor())
-    print(f'signed tx_id: ')
