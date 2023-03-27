@@ -82,9 +82,14 @@ def build_transaction(address):
     builder = TransactionBuilder(GLOBAL_context)
     builder.add_input_address(address=address)
     builder.add_output(TransactionOutput.from_primitive([str(address), 100_000_000]))
-    builder.ttl = 15235233
+    # ttl = time to live
+    # TTL = slot + N slots. Where N is the amount of slots you want to
+    # add to give the transaction a window to be included in a block.
+    # max slot in epoch(5days) = 432_000
+    # builder.ttl = 23235963
     # builder.reference_inputs.add(utxos[0])
     signed_tx = builder.build_and_sign([sk], address)
     print(f'signed tx_id: {signed_tx.id}')
-    tx_to_cbor = signed_tx.to_cbor()
+    # tx_to_cbor = signed_tx.to_cbor()
     GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print(f'Submitted transaction successfully.')
