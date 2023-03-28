@@ -9,3 +9,4 @@ if __name__ == '__main__':
     testnet_address = utils.get_address()
     amount_lovelaces = utils.get_lovelace_amount_from_address(testnet_address)
     # utils.build_transaction(testnet_address)
+    # utils.datum_serialization()
