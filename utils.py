@@ -100,10 +100,16 @@ def build_transaction(address):
 
 
 @dataclass
-class sample_datum(PlutusData):
+class Sample_datum(PlutusData):
     CONSTR_ID = 1
     a: int
     b: bytes
     c: pycardano.IndefiniteList
     d: dict
+
+
+def datum_to_cbor():
+    datum = Sample_datum(123, b"1234", pycardano.IndefiniteList([4, 5, 6]), {1: b"1", 2: b"2"})
+    datum_as_cbor = datum.to_cbor()
+    print(f"datum as cbor: {datum_as_cbor}")
 
