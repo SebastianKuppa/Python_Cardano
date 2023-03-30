@@ -22,9 +22,9 @@ GLOBAL_context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
     payment_signing_key = pycardano.PaymentSigningKey.generate()
-    payment_signing_key = payment_signing_key.save(signing_key_path)
+    payment_signing_key.save(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.from_signing_key(payment_signing_key)
-    payment_verification_key = payment_verification_key.save(verification_key_path)
+    payment_verification_key.save(verification_key_path)
 
     return payment_signing_key, payment_verification_key
 
