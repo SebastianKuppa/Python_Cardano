@@ -35,11 +35,18 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script_address = create_script_address()
     # load giver and receiver addresses
-    giver_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
-                                      verification_key_path="./keys/giver/payment.vkey")
-    receiver_address = utils.get_address(signing_key_path="./keys/taker/payment.skey",
-                                         verification_key_path="./keys/taker/payment.vkey")
+    giver_skey = pycardano.PaymentSigningKey.load("./keys/giver/payment.skey")
+    giver_vkey = pycardano.PaymentVerificationKey.load("./keys/giver/payment.vkey")
+    giver_address = Address(giver_vkey.hash(), network=utils.GLOBAL_network)
+
+    taker_skey = pycardano.PaymentSigningKey.load("./keys/taker/payment.skey")
+    taker_vkey = pycardano.PaymentVerificationKey.load("./keys/taker/payment.vkey")
+    taker_address = Address(taker_vkey.hash(), network=utils.GLOBAL_network)
+
     # build transaction
     builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
     # add giver address as transaction input
     builder.add_input_address(giver_address)
+
+    # init datum
+    datum = CancelDatum(taker_vkey.hash().to_primitive())
