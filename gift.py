@@ -1,6 +1,11 @@
 from opshin.prelude import *
 from pycardano import PlutusV2Script, plutus_script_hash, Network, Address
 
+import utils
+
+
+GLOBAL_network = Network.TESTNET
+
 
 @dataclass()
 class CancelDatum(PlutusData):
@@ -20,7 +25,14 @@ def create_script_address(cbor_file="./build/gift/script.cbor"):
         script_hex = f.read()
     gift_script = PlutusV2Script(bytes.fromhex(script_hex))
     script_hash = plutus_script_hash(gift_script)
-    network = Network.TESTNET
-    script_address = Address(script_hash, network=network)
+    script_address = Address(script_hash, network=GLOBAL_network)
 
     return script_address
+
+
+if __name__ == "__main__":
+    gift_script_address = create_script_address()
+    giver_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
+                                      verification_key_path="./keys/giver/payment.vkey")
+    receiver_address = utils.get_address(signing_key_path="./keys/taker/payment.skey",
+                                      verification_key_path="./keys/taker/payment.vkey")
