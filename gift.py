@@ -31,7 +31,7 @@ def create_script_address(cbor_file="./build/gift/script.cbor"):
     return script_address
 
 
-if __name__ == "__main__":
+def run_gift_contract():
     # create smart contract address
     gift_script_address = create_script_address()
     # load giver and receiver addresses
@@ -50,3 +50,7 @@ if __name__ == "__main__":
 
     # init datum
     datum = CancelDatum(taker_vkey.hash().to_primitive())
+
+
+if __name__ == "__main__":
+    run_gift_contract()
