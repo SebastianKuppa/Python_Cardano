@@ -29,7 +29,7 @@ def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_
     return payment_signing_key, payment_verification_key
 
 
-def load_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
+def load_keys(signing_key_path="./keys/giver/payment.skey", verification_key_path="./keys/giver/payment.vkey"):
     payment_signing_key = pycardano.PaymentSigningKey.load(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.load(verification_key_path)
 
@@ -73,17 +73,22 @@ def get_lovelace_amount_from_address(address):
     amount_lovelace = 0
     for utxo in utxos:
         amount_lovelace += int(utxo.amount[0].quantity)
-    print(f"The address: {address} has currently {calc_ada_from_lovelace(amount_lovelace)} ADA ({amount_lovelace} lovelace).")
+    # print(f"The address: {address} has currently {calc_ada_from_lovelace(amount_lovelace)} ADA ({amount_lovelace} lovelace).")
 
     return amount_lovelace
 
 
-def build_transaction(address):
-    sk, vk = load_keys()
-    utxos = GLOBAL_context.utxos(str(address))
+def simple_send_transaction(input_address, output_address):
+    input_sk, input_vk = load_keys(signing_key_path="./keys/giver/payment.skey",
+                                   verification_key_path="./keys/giver/payment.vkey")
+    # get all utxos of input_address
+    utxos = GLOBAL_context.utxos(str(input_address))
+
+    # init transaction
     builder = TransactionBuilder(GLOBAL_context)
-    builder.add_input_address(address=address)
-    builder.add_output(TransactionOutput.from_primitive([str(address), 100_000_000]))
+    # add input address as transaction input
+    builder.add_input_address(address=input_address)
+    builder.add_output(TransactionOutput.from_primitive([str(output_address), 100_000_000]))
 
     # ttl = time to live
     # TTL = slot + N slots. Where N is the amount of slots you want to
@@ -92,7 +97,7 @@ def build_transaction(address):
     # builder.ttl = 23235963
     # builder.reference_inputs.add(utxos[0])
 
-    signed_tx = builder.build_and_sign([sk], address)
+    signed_tx = builder.build_and_sign(signing_keys=[input_sk], change_address=input_address)
     print(f'signed tx_id: {signed_tx.id}')
     # tx_to_cbor = signed_tx.to_cbor()
     GLOBAL_context.submit_tx(signed_tx.to_cbor())
