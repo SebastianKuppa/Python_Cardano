@@ -15,4 +15,5 @@ if __name__ == '__main__':
           f"contains {input_address_ada_amount} ADA")
     print(f"output_address: {output_address}, "
           f"contains {output_address_ada_amount} ADA)")
-    # utils.simple_send_transaction(input_address, output_address)
+    # execute transaction between input and output addresses
+    # utils.simple_send_transaction(input_address, output_address, send_amount=1_000_000_000)

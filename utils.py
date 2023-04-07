@@ -82,7 +82,7 @@ def address_ada_quantity(input_address):
     return calc_ada_from_lovelace(get_lovelace_amount_from_address(input_address))
 
 
-def simple_send_transaction(input_address, output_address):
+def simple_send_transaction(input_address, output_address, send_amount=100_000_000):
     input_sk, input_vk = load_keys(signing_key_path="./keys/giver/payment.skey",
                                    verification_key_path="./keys/giver/payment.vkey")
     # get all utxos of input_address
@@ -92,7 +92,7 @@ def simple_send_transaction(input_address, output_address):
     builder = TransactionBuilder(GLOBAL_context)
     # add input address as transaction input
     builder.add_input_address(address=input_address)
-    builder.add_output(TransactionOutput.from_primitive([str(output_address), 100_000_000]))
+    builder.add_output(TransactionOutput.from_primitive([str(output_address), send_amount]))
 
     # ttl = time to live
     # TTL = slot + N slots. Where N is the amount of slots you want to
