@@ -103,7 +103,10 @@ def simple_send_transaction(input_address, output_address, send_amount=100_000_0
 
     signed_tx = builder.build_and_sign(signing_keys=[input_sk], change_address=input_address)
     print(f'signed tx_id: {signed_tx.id}')
-    # tx_to_cbor = signed_tx.to_cbor()
+    # calc transaction fee
+    transaction_fee = pycardano.fee(GLOBAL_context, len(signed_tx.to_cbor("bytes")))
+    print(f"The minimum transaction fee is: {calc_ada_from_lovelace(transaction_fee)} ADA")
+    # submit transaction on the chain
     GLOBAL_context.submit_tx(signed_tx.to_cbor())
     print(f'Submitted transaction successfully.')
 
