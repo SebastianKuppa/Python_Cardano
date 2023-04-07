@@ -78,6 +78,10 @@ def get_lovelace_amount_from_address(address):
     return amount_lovelace
 
 
+def address_ada_quantity(input_address):
+    return calc_ada_from_lovelace(get_lovelace_amount_from_address(input_address))
+
+
 def simple_send_transaction(input_address, output_address):
     input_sk, input_vk = load_keys(signing_key_path="./keys/giver/payment.skey",
                                    verification_key_path="./keys/giver/payment.vkey")
