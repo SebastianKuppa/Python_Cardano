@@ -62,12 +62,12 @@ def calc_ada_from_lovelace(amount_lovelace):
 
 def get_lovelace_amount_from_address(address):
     # get utxos for address
-    utxos = GLOBAL_context.utxos(address)
+    utxos = GLOBAL_context.utxos(str(address))
 
     # loop over all utxos and add the quantity of lovelace together
     amount_lovelace = 0
     for utxo in utxos:
-        amount_lovelace += int(utxo.amount[0].quantity)
+        amount_lovelace += utxo.output.amount.coin
 
     return amount_lovelace
 
