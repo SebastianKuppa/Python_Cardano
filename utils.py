@@ -100,8 +100,10 @@ def simple_send_transaction(input_address, output_address, send_amount=100_000_0
     transaction_fee = pycardano.fee(GLOBAL_context, len(signed_tx.to_cbor("bytes")))
     print(f"The minimum transaction fee is: {calc_ada_from_lovelace(transaction_fee)} ADA")
     # submit transaction on the chain
-    GLOBAL_context.submit_tx(signed_tx.to_cbor())
-    print(f'Submitted transaction successfully.')
+    transaction_hash = GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print(f'Submitted transaction: {transaction_hash} successfully.')
+
+    return signed_tx.to_cbor()
 
 
 @dataclass

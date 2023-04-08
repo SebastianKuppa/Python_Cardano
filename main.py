@@ -1,7 +1,9 @@
 import utils
+import time
 
 
 if __name__ == '__main__':
+    print(f"Current protocol params: {utils.GLOBAL_context.protocol_param}")
     # get address from digital signatures
     input_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
                                       verification_key_path="./keys/giver/payment.vkey")
@@ -16,4 +18,6 @@ if __name__ == '__main__':
     print(f"output_address: {output_address}, "
           f"contains {output_address_ada_amount} ADA)")
     # execute transaction between input and output addresses
-    # utils.simple_send_transaction(input_address, output_address, send_amount=100_000_000)
+    # transaction_cbor = utils.simple_send_transaction(input_address, output_address, send_amount=100_000_000)
+    # time.sleep(10)
+    # print(f"Transaction evaluation: \n{utils.GLOBAL_context.evaluate_tx(transaction_cbor)}")
