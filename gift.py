@@ -50,6 +50,10 @@ def run_gift_contract():
 
     # init datum
     datum = CancelDatum(taker_vkey.hash().to_primitive())
+    # add gift_script as transaction output
+    builder.add_output(pycardano.TransactionOutput(gift_script_address,
+                                                   5_000_000,
+                                                   datum_hash=pycardano.datum_hash(datum)))
 
 
 if __name__ == "__main__":
