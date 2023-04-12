@@ -16,12 +16,10 @@ def create_script_address(cbor_file="./build/gift/script.cbor"):
     script_hash = plutus_script_hash(gift_script)
     script_address = Address(script_hash, network=GLOBAL_network)
 
-    return script_address
+    return gift_script, script_address
 
 
-def run_gift_contract():
-    # create smart contract address
-    gift_script_address = create_script_address()
+def add_funds_to_gift_contract(gift_script_address):
     # load giver and receiver addresses
     giver_skey = pycardano.PaymentSigningKey.load("./keys/giver/payment.skey")
     giver_vkey = pycardano.PaymentVerificationKey.load("./keys/giver/payment.vkey")
@@ -47,6 +45,23 @@ def run_gift_contract():
     # submit transaction
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
+    return gift_script_address
+
+
+def taker_takes_gift(gift_script, taker_address):
+    # create an empty redeemer, because it needs to be passed to the script transaction, but it has no
+    # needed information for the script
+    redeemer = Redeemer(PlutusData())
+    # utxo to spend in order to activate the gift script on chain
+    utxo_to_spend = utils.GLOBAL_context.utxos(taker_address)[0]
+    # init transaction
+    redeem_gift_transaction = utils.TransactionBuilder(utils.GLOBAL_context)
+
 
 if __name__ == "__main__":
-    run_gift_contract()
+    # create smart contract address
+    gift_script, gift_script_address = create_script_address()
+    # add funds to gift script
+    add_funds_to_gift_contract(gift_script_address)
+    # retrieve funds from gift script
+    taker_takes_gift(gift_script)
