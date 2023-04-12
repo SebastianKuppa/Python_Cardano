@@ -42,7 +42,10 @@ def run_gift_contract():
     builder.add_output(pycardano.TransactionOutput(gift_script_address,
                                                    5_000_000,
                                                    datum_hash=pycardano.datum_hash(datum)))
-    # sign the script transaction
+    # sign the script transaction by giver
+    signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
+    # submit transaction
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
 if __name__ == "__main__":
