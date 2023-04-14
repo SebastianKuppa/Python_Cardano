@@ -6,15 +6,12 @@ from pycardano import PlutusV2Script, plutus_script_hash, Network, Address
 import utils
 
 
-GLOBAL_network = Network.TESTNET
-
-
-def create_script_address(cbor_file="./build/gift/script.cbor"):
+def create_script_and_address(cbor_file="./build/gift/script.cbor"):
     with open(cbor_file, "r") as f:
         script_hex = f.read()
     script = PlutusV2Script(bytes.fromhex(script_hex))
     script_hash = plutus_script_hash(script)
-    script_address = Address(script_hash, network=GLOBAL_network)
+    script_address = Address(script_hash, network=utils.GLOBAL_network)
 
     return script, script_address
 
@@ -32,12 +29,12 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # submit transaction
-    # utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
 def taker_takes_gift(gift_script, gift_script_address, taker_address, datum, redeemer):
     # utxo to spend in order to activate the gift script on chain
-    utxo_to_spend = utils.GLOBAL_context.utxos(str(gift_script_address))[0]
+    utxo_to_spend = utils.GLOBAL_context.utxos(str(taker_address))[0]
     # init transaction
     redeem_gift_transaction = utils.TransactionBuilder(utils.GLOBAL_context)
     redeem_gift_transaction.add_script_input(utxo_to_spend, gift_script, datum, redeemer)
@@ -62,7 +59,7 @@ if __name__ == "__main__":
     redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
 
     # create smart contract address
-    gift_script, gift_script_address = create_script_address()
+    gift_script, gift_script_address = create_script_and_address()
     # add funds to gift script
     add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum)
     # retrieve funds from gift script
