@@ -30,10 +30,10 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # addr_test1wqnl9utp25gfheqgsn5x4s9evfv0mjv8cdq7e57aandfllgyw9cnk
     # submit transaction
-    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    # utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
-def taker_takes_gift(gift_script, gift_script_address, datum, redeemer):
+def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address):
     # utxo to spend in order to activate the gift script on chain
     utxo_to_spend = utils.GLOBAL_context.utxos(str(gift_script_address))[-1]
     # init transaction
@@ -44,14 +44,12 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer):
 
 
 if __name__ == "__main__":
-    # load giver and receiver addresses
-    giver_skey = pycardano.PaymentSigningKey.load("./keys/giver/payment.skey")
-    giver_vkey = pycardano.PaymentVerificationKey.load("./keys/giver/payment.vkey")
-    giver_address = Address(giver_vkey.hash(), network=utils.GLOBAL_network)
-
-    taker_skey = pycardano.PaymentSigningKey.load("./keys/taker/payment.skey")
-    taker_vkey = pycardano.PaymentVerificationKey.load("./keys/taker/payment.vkey")
-    taker_address = Address(taker_vkey.hash(), network=utils.GLOBAL_network)
+    # load giver addresses
+    giver_skey, giver_vkey, giver_addr = utils.load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
+                                                                     verification_key_path="./keys/giver/payment.vkey")
+    # load receiver addresses
+    taker_skey, taker_vkey, taker_addr = utils.load_keys_and_address(signing_key_path="./keys/taker/payment.skey",
+                                                                     verification_key_path="./keys/taker/payment.vkey")
 
     # init datum
     datum = gift.CancelDatum(taker_vkey.hash().to_primitive())
@@ -63,6 +61,6 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script, gift_script_address = create_script_and_address()
     # add funds to gift script
-    add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash)
+    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash)
     # retrieve funds from gift script
-    taker_takes_gift(gift_script, gift_script_address, datum, redeemer)
+    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr)

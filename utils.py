@@ -11,9 +11,12 @@ from pycardano import (
     TransactionOutput,
     TransactionWitnessSet,
     VerificationKeyWitness,
-    PlutusData
+    PlutusData,
+    Address,
+    Network
 )
 from opshin.prelude import *
+
 
 GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
@@ -29,11 +32,13 @@ def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_
     return payment_signing_key, payment_verification_key
 
 
-def load_keys(signing_key_path="./keys/giver/payment.skey", verification_key_path="./keys/giver/payment.vkey"):
+def load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
+                          verification_key_path="./keys/giver/payment.vkey"):
     payment_signing_key = pycardano.PaymentSigningKey.load(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.load(verification_key_path)
-
-    return payment_signing_key, payment_verification_key
+    payment_address = pycardano.Address(payment_part=payment_verification_key.hash(), network=GLOBAL_network)
+    print(f'Created address: {payment_address}')
+    return payment_signing_key, payment_verification_key, payment_address
 
 
 def create_address():
@@ -42,8 +47,7 @@ def create_address():
     payment_verification_key = pycardano.PaymentVerificationKey.from_signing_key(payment_signing_key)
     payment_verification_key.save("./keys/payment.vkey")
 
-    network = pycardano.Network.TESTNET
-    address = pycardano.Address(payment_part=payment_verification_key.hash(), network=network)
+    address = Address(payment_part=payment_verification_key.hash(), network=GLOBAL_network)
     print(f'Created address: {address}')
 
 
