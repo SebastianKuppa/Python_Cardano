@@ -16,7 +16,7 @@ def create_script_and_address(cbor_file="./build/gift/script.cbor"):
     return script, script_address
 
 
-def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum):
+def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash):
     # build transaction for sending funds and datum to script address
     builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
     # add giver address as transaction input
@@ -24,17 +24,18 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
 
     # add gift_script as transaction output
     builder.add_output(pycardano.TransactionOutput(gift_script_address,
-                                                   5_000_000,
-                                                   datum_hash=pycardano.datum_hash(datum)))
+                                                   6_000_000,
+                                                   datum_hash=datum_hash))
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
+    # addr_test1wqnl9utp25gfheqgsn5x4s9evfv0mjv8cdq7e57aandfllgyw9cnk
     # submit transaction
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
-def taker_takes_gift(gift_script, gift_script_address, taker_address, datum, redeemer):
+def taker_takes_gift(gift_script, gift_script_address, datum, redeemer):
     # utxo to spend in order to activate the gift script on chain
-    utxo_to_spend = utils.GLOBAL_context.utxos(str(taker_address))[0]
+    utxo_to_spend = utils.GLOBAL_context.utxos(str(gift_script_address))[-1]
     # init transaction
     redeem_gift_transaction = utils.TransactionBuilder(utils.GLOBAL_context)
     redeem_gift_transaction.add_script_input(utxo_to_spend, gift_script, datum, redeemer)
@@ -54,6 +55,7 @@ if __name__ == "__main__":
 
     # init datum
     datum = gift.CancelDatum(taker_vkey.hash().to_primitive())
+    datum_hash = pycardano.datum_hash(datum)
     # create an empty redeemer, because it needs to be passed to the script transaction, but it has no
     # needed information for the script
     redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
@@ -61,6 +63,6 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script, gift_script_address = create_script_and_address()
     # add funds to gift script
-    add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum)
+    add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash)
     # retrieve funds from gift script
-    taker_takes_gift(gift_script, gift_script_address, taker_address, datum, redeemer)
+    taker_takes_gift(gift_script, gift_script_address, datum, redeemer)
