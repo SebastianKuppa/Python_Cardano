@@ -13,11 +13,10 @@ from pycardano import (
     VerificationKeyWitness,
     PlutusData,
     Address,
-    Network
 )
 from opshin.prelude import *
 
-
+# set network
 GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
 GLOBAL_context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
@@ -81,8 +80,8 @@ def address_ada_quantity(input_address):
 
 
 def simple_send_transaction(input_address, output_address, send_amount=100_000_000):
-    input_sk, input_vk = load_keys(signing_key_path="./keys/giver/payment.skey",
-                                   verification_key_path="./keys/giver/payment.vkey")
+    input_sk, input_vk, _ = load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
+                                                  verification_key_path="./keys/giver/payment.vkey")
     # get all utxos of input_address
     utxos = GLOBAL_context.utxos(str(input_address))
 

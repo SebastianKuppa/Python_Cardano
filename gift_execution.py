@@ -1,7 +1,7 @@
 import gift
 import pycardano
 from opshin.prelude import *
-from pycardano import PlutusV2Script, plutus_script_hash, Network, Address
+from pycardano import PlutusV2Script, plutus_script_hash, Address
 
 import utils
 
@@ -38,8 +38,10 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     utxo_to_spend = utils.GLOBAL_context.utxos(str(gift_script_address))[-1]
     # init transaction
     redeem_gift_transaction = utils.TransactionBuilder(utils.GLOBAL_context)
+    # add smart contract as transaction input
     redeem_gift_transaction.add_script_input(utxo_to_spend, gift_script, datum, redeemer)
-    take_output = pycardano.TransactionOutput(taker_address, 25123456)
+    # add taker_address as transaction output
+    take_output = pycardano.TransactionOutput(taker_address, 2_000_000)
     redeem_gift_transaction.add_output(take_output)
 
 
