@@ -44,6 +44,9 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     take_output = pycardano.TransactionOutput(taker_address, 2_000_000)
     redeem_gift_transaction.add_output(take_output)
 
+    # get non_nft utxo from take address in order to provide the transaction collateral
+    non_nft_utxo = utils.check_for_utxo_containing_ada(taker_address)
+
 
 if __name__ == "__main__":
     # load giver addresses

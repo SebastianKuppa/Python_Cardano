@@ -79,6 +79,15 @@ def address_ada_quantity(input_address):
     return calc_ada_from_lovelace(get_lovelace_amount_from_address(input_address))
 
 
+def check_for_utxo_containing_ada(taker_address: Address):
+    non_nft_utxo = None
+    for utxo in GLOBAL_context.utxos(str(taker_address)):
+        if not utxo.output.amount.multi_asset:
+            non_nft_utxo = utxo
+            break
+    return non_nft_utxo
+
+
 def simple_send_transaction(input_address, output_address, send_amount=100_000_000):
     input_sk, input_vk, _ = load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
                                                   verification_key_path="./keys/giver/payment.vkey")
