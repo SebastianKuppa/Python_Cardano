@@ -51,8 +51,8 @@ def create_address():
 
 
 def get_address(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
-    _, payment_verification_key = load_keys(signing_key_path=signing_key_path,
-                                            verification_key_path=verification_key_path)
+    _, payment_verification_key, _ = load_keys_and_address(signing_key_path=signing_key_path,
+                                                           verification_key_path=verification_key_path)
     network = pycardano.Network.TESTNET
     address = pycardano.Address(payment_part=payment_verification_key.hash(), network=network)
 
@@ -79,7 +79,7 @@ def address_ada_quantity(input_address):
     return calc_ada_from_lovelace(get_lovelace_amount_from_address(input_address))
 
 
-def check_for_utxo_containing_ada(taker_address: Address):
+def check_for_non_nft_utxo_at_address(taker_address: Address):
     non_nft_utxo = None
     for utxo in GLOBAL_context.utxos(str(taker_address)):
         if not utxo.output.amount.multi_asset:

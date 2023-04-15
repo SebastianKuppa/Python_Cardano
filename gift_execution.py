@@ -33,7 +33,7 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
     # utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
-def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address):
+def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address, taker_skey, taker_vkey):
     # utxo to spend in order to activate the gift script on chain
     utxo_to_spend = utils.GLOBAL_context.utxos(str(gift_script_address))[-1]
     # init transaction
@@ -45,7 +45,15 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     redeem_gift_transaction.add_output(take_output)
 
     # get non_nft utxo from take address in order to provide the transaction collateral
-    non_nft_utxo = utils.check_for_utxo_containing_ada(taker_address)
+    non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
+    # add colleteral to address
+    redeem_gift_transaction.collaterals.append(non_nft_utxo)
+    # sign transaction with taker payment_key
+    signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], taker_address)
+    # add taker as required signer
+    redeem_gift_transaction.required_signers = [taker_vkey.hash()]
+    # submit transaction on-chain
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
 if __name__ == "__main__":
@@ -68,4 +76,4 @@ if __name__ == "__main__":
     # add funds to gift script
     add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash)
     # retrieve funds from gift script
-    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr)
+    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
