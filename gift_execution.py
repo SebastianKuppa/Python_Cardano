@@ -30,7 +30,7 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # addr_test1wqnl9utp25gfheqgsn5x4s9evfv0mjv8cdq7e57aandfllgyw9cnk
     # submit transaction
-    # utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
 
 def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address, taker_skey, taker_vkey):
@@ -48,10 +48,10 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
     # add colleteral to address
     redeem_gift_transaction.collaterals.append(non_nft_utxo)
-    # sign transaction with taker payment_key
-    signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], taker_address)
     # add taker as required signer
     redeem_gift_transaction.required_signers = [taker_vkey.hash()]
+    # sign transaction with taker payment_key
+    signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], taker_address)
     # submit transaction on-chain
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
 
