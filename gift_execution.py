@@ -1,4 +1,4 @@
-import gift
+from smart_contracts.gift_contract import gift
 import pycardano
 from opshin.prelude import *
 from pycardano import PlutusV2Script, plutus_script_hash, Address
