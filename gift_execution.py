@@ -6,7 +6,7 @@ from pycardano import PlutusV2Script, plutus_script_hash, Address
 import utils
 
 
-def create_script_and_address(cbor_file="./build/gift/script.cbor"):
+def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/gift/script.cbor"):
     with open(cbor_file, "r") as f:
         script_hex = f.read()
     script = PlutusV2Script(bytes.fromhex(script_hex))
