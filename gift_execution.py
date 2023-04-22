@@ -16,7 +16,7 @@ def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/g
     return script, script_address
 
 
-def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash):
+def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash, amount):
     # build transaction for sending funds and datum to script address
     builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
     # add giver address as transaction input
@@ -24,13 +24,14 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
 
     # add gift_script as transaction output
     builder.add_output(pycardano.TransactionOutput(gift_script_address,
-                                                   6_000_000,
+                                                   amount,
                                                    datum_hash=datum_hash))
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # addr_test1wqnl9utp25gfheqgsn5x4s9evfv0mjv8cdq7e57aandfllgyw9cnk
     # submit transaction
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print(f"Added {amount} lovelace to {gift_script_address} successfully..")
 
 
 def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address, taker_skey, taker_vkey):
@@ -74,6 +75,6 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script, gift_script_address = create_script_and_address()
     # add funds to gift script
-    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash)
+    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
     # retrieve funds from gift script
-    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
+    # taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
