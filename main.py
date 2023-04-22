@@ -26,8 +26,11 @@ if __name__ == '__main__':
     # script transaction fee 199909 lovelace
 
     # input_address: addr_test1vrpttmc34s5lm2eljpyhecyqclyt08k7up2d2ng0043c6vgjqvxx6, contains
-    # 7926.661944
+    # 7894.447573 -> tx_fee = 0.168669
+    # 7888.278904 -> tx_fee = 0.211861
+    # 7893.067043
     # ADA
     # output_address: addr_test1vp2zv2s7vfxeherqhylvtaeul02hjxqluymjffjqlcdre3cptc9sd, contains
-    # 11928.937094
+    # 11964.67244
+    # 11965.67244
     # ADA)

@@ -89,6 +89,9 @@ def check_for_non_nft_utxo_at_address(taker_address: Address):
 
 
 def print_utxos_from_address(address):
+    if not GLOBAL_context.utxos(str(address)):
+        print(f"Address: {str(address)} has no UTXOs.")
+        return
     print(f"Following UTXOs sit at the address: {str(address)}:\n")
     for i, utxo in enumerate(GLOBAL_context.utxos(str(address))):
         print(f"{i}: {utxo}")
