@@ -23,9 +23,11 @@ if __name__ == '__main__':
     # time.sleep(10)
     # print(f"Transaction evaluation: \n{utils.GLOBAL_context.evaluate_tx(transaction_cbor)}")
 
+    # script transaction fee 199909 lovelace
+
     # input_address: addr_test1vrpttmc34s5lm2eljpyhecyqclyt08k7up2d2ng0043c6vgjqvxx6, contains
-    # 7945.163199
+    # 7926.661944
     # ADA
     # output_address: addr_test1vp2zv2s7vfxeherqhylvtaeul02hjxqluymjffjqlcdre3cptc9sd, contains
-    # 11911.572677
+    # 11928.937094
     # ADA)
