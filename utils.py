@@ -88,6 +88,12 @@ def check_for_non_nft_utxo_at_address(taker_address: Address):
     return non_nft_utxo
 
 
+def print_utxos_from_address(address):
+    print(f"Following UTXOs sit at the address: {str(address)}:\n")
+    for i, utxo in enumerate(GLOBAL_context.utxos(str(address))):
+        print(f"{i}: {utxo}")
+
+
 def simple_send_transaction(input_address, output_address, send_amount=100_000_000):
     input_sk, input_vk, _ = load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
                                                   verification_key_path="./keys/giver/payment.vkey")

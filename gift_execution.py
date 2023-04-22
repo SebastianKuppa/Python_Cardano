@@ -75,6 +75,6 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script, gift_script_address = create_script_and_address()
     # add funds to gift script
-    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
+    # add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
     # retrieve funds from gift script
-    # taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
+    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)

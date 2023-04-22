@@ -17,6 +17,7 @@ if __name__ == '__main__':
           f"contains {input_address_ada_amount} ADA")
     print(f"output_address: {output_address}, "
           f"contains {output_address_ada_amount} ADA)")
+    utils.print_utxos_from_address("addr_test1wpc4h2fygpcuu7degsta7v03pcq2c8zr6g6v8s7f8c7hanqqzeur2")
     # execute transaction between input and output addresses
     # transaction_cbor = utils.simple_send_transaction(input_address, output_address, send_amount=100_000_000)
     # time.sleep(10)
