@@ -15,6 +15,7 @@ from pycardano import (
     Address,
 )
 from opshin.prelude import *
+import pathlib
 
 # set network
 GLOBAL_network = pycardano.Network.TESTNET
