@@ -32,8 +32,8 @@ def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, d
     # submit transaction
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
     transaction_fee = pycardano.fee(utils.GLOBAL_context, len(signed_tx.to_cbor("bytes")))
-    print(f"Added {amount} lovelace to {gift_script_address} successfully.")
-    print(f"The transaction fee was: {transaction_fee}")
+    print(f"Send {amount} lovelace to {gift_script_address} successfully.")
+    print(f"The transaction fee was: {transaction_fee} lovelace.")
 
 
 def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address, taker_skey, taker_vkey, giver_address):
@@ -54,7 +54,7 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     min_transaction_fee = redeem_gift_transaction._estimate_fee()
     # add taker_address as transaction output
     take_output = pycardano.TransactionOutput(taker_address, 1_000_000)
-    redeem_gift_transaction.add_output(take_output)
+    # redeem_gift_transaction.add_output(take_output)
     # sign transaction with taker payment_key
     signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], giver_address)
     # submit transaction on-chain
@@ -74,7 +74,8 @@ if __name__ == "__main__":
     datum_hash = pycardano.datum_hash(datum)
     # create an empty redeemer, because it needs to be passed to the script transaction, but it has no
     # needed information for the script
-    redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
+    redeemer = pycardano.Redeemer(0)
+    # redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
 
     # create smart contract address
     gift_script, gift_script_address = create_script_and_address()
