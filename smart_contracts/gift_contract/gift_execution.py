@@ -8,23 +8,22 @@ from pycardano import PlutusV2Script, plutus_script_hash, Address
 import utils
 
 
-def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash, amount):
+def add_funds_to_gift_contract(script_address, giver_address, giver_skey, datum_hash, amount):
     # build transaction for sending funds and datum to script address
     builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
     # add giver address as transaction input
     builder.add_input_address(giver_address)
 
     # add gift_script as transaction output
-    builder.add_output(pycardano.TransactionOutput(gift_script_address,
+    builder.add_output(pycardano.TransactionOutput(script_address,
                                                    amount,
                                                    datum_hash=datum_hash))
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
-    # addr_test1wqnl9utp25gfheqgsn5x4s9evfv0mjv8cdq7e57aandfllgyw9cnk
     # submit transaction
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
     transaction_fee = pycardano.fee(utils.GLOBAL_context, len(signed_tx.to_cbor("bytes")))
-    print(f"Send {amount} lovelace to {gift_script_address} successfully.")
+    print(f"Send {amount} lovelace to {script_address} successfully.")
     print(f"The transaction fee was: {transaction_fee} lovelace.")
 
 
@@ -76,6 +75,6 @@ if __name__ == "__main__":
     # create smart contract address
     gift_script, gift_script_address = utils.create_script_and_address()
     # add funds to gift script
-    # add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
+    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
     # retrieve funds from gift script
     taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey, giver_addr)

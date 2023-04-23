@@ -4,6 +4,50 @@ import utils
 import pathlib
 
 
+def add_funds_to_sum_contract(script_address, giver_address, giver_skey, datum, amount):
+    # build transaction for sending funds and datum to script address
+    builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
+    # add giver address as transaction input
+    builder.add_input_address(giver_address)
+
+    # add gift_script as transaction output
+    builder.add_output(pycardano.TransactionOutput(script_address,
+                                                   amount,
+                                                   datum=datum))
+    # sign the script transaction by giver
+    signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
+    # submit transaction
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    transaction_fee = pycardano.fee(utils.GLOBAL_context, len(signed_tx.to_cbor("bytes")))
+    print(f"Send {amount} lovelace to {script_address} successfully.")
+    print(f"The transaction fee was: {transaction_fee} lovelace.")
+
+
+def taker_takes_gift(script, script_address, datum, redeemer, taker_address, taker_skey, taker_vkey, giver_address):
+    # utxo to spend in order to activate the gift script on chain
+    utxo_to_spend = utils.GLOBAL_context.utxos(str(script_address))[-1]
+    # init transaction
+    transaction = utils.TransactionBuilder(utils.GLOBAL_context)
+    # add smart contract as transaction input
+    transaction.add_script_input(utxo_to_spend, script, datum=datum, redeemer=redeemer)
+
+    # get non_nft utxo from take address in order to provide the transaction collateral
+    non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
+    # add colleteral to address
+    transaction.collaterals.append(non_nft_utxo)
+    # add taker as required signer
+    transaction.required_signers = [taker_vkey.hash()]
+    # get estimated transaction fee
+    min_transaction_fee = transaction._estimate_fee()
+    # add taker_address as transaction output
+    # take_output = pycardano.TransactionOutput(taker_address, 1_000_000)
+    # redeem_gift_transaction.add_output(take_output)
+    # sign transaction with taker payment_key
+    signed_tx = transaction.build_and_sign([taker_skey], giver_address)
+    # submit transaction on-chain
+    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+
+
 if __name__ == '__main__':
     # load giver addresses
     giver_skey_abs_path = pathlib.Path("../../keys/giver/payment.skey").absolute()
@@ -19,8 +63,16 @@ if __name__ == '__main__':
     datum = 10
     datum_hash = pycardano.datum_hash(datum)
 
-    # create redeemer
-    redeemer = 40
+    # create redeeme
+    redeemer = pycardano.Redeemer(
+        data=32,
+    )
 
     # get smart contract address on testnet
-    sum_script_address = utils.get_script_address("./build/sum_validator/testnet.addr")
+    sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator/testnet.addr")
+
+    # send ada with datum to contract
+    # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
+    # take funds from contract
+    taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey, giver_addr)
+

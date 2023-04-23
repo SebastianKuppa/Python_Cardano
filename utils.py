@@ -63,12 +63,13 @@ def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/g
     return script, script_address
 
 
-def get_script_address(script_path="./build/sum_validator/testnet.addr"):
+def get_script_address_and_script(script_path="./build/sum_validator/testnet.addr"):
     script_path = pathlib.Path(script_path)
     # Load script info
     with open(script_path) as f:
         script_address = pycardano.Address.from_primitive(f.read())
-    return script_address
+        script = PlutusV2Script(bytes.fromhex(f.read()))
+    return script, script_address
 
 
 def get_address(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
@@ -148,18 +149,21 @@ def simple_send_transaction(input_address, output_address, send_amount=100_000_0
     return signed_tx.to_cbor()
 
 
-@dataclass
-class Sample_datum(PlutusData):
-    CONSTR_ID = 1
-    a: int
-    b: bytes
-    c: pycardano.IndefiniteList
-    d: dict
+def add_funds_and_datum_to_contract(script_address, giver_address, giver_skey, datum, amount):
+    # build transaction for sending funds and datum to script address
+    builder = pycardano.TransactionBuilder(context=GLOBAL_context)
+    # add giver address as transaction input
+    builder.add_input_address(giver_address)
 
-
-def datum_to_cbor():
-    datum = Sample_datum(123, b"1234", pycardano.IndefiniteList([4, 5, 6]), {1: b"1", 2: b"2"})
-    datum_as_cbor = datum.to_cbor()
-    print(f"datum as cbor: {datum_as_cbor}")
-    return datum_as_cbor
+    # add gift_script as transaction output
+    builder.add_output(pycardano.TransactionOutput(script_address,
+                                                   amount,
+                                                   datum=datum))
+    # sign the script transaction by giver
+    signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
+    # submit transaction
+    GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    transaction_fee = pycardano.fee(GLOBAL_context, len(signed_tx.to_cbor("bytes")))
+    print(f"Send {amount} lovelace to {script_address} successfully.")
+    print(f"The transaction fee was: {transaction_fee} lovelace.")
 
