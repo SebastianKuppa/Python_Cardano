@@ -13,6 +13,8 @@ from pycardano import (
     VerificationKeyWitness,
     PlutusData,
     Address,
+    PlutusV2Script,
+    plutus_script_hash
 )
 from opshin.prelude import *
 import pathlib
@@ -49,6 +51,16 @@ def create_address():
 
     address = Address(payment_part=payment_verification_key.hash(), network=GLOBAL_network)
     print(f'Created address: {address}')
+
+
+def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/gift/script.cbor"):
+    with open(cbor_file, "r") as f:
+        script_hex = f.read()
+    script = PlutusV2Script(bytes.fromhex(script_hex))
+    script_hash = plutus_script_hash(script)
+    script_address = Address(script_hash, network=GLOBAL_network)
+
+    return script, script_address
 
 
 def get_address(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):

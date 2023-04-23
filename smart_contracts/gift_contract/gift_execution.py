@@ -8,16 +8,6 @@ from pycardano import PlutusV2Script, plutus_script_hash, Address
 import utils
 
 
-def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/gift/script.cbor"):
-    with open(cbor_file, "r") as f:
-        script_hex = f.read()
-    script = PlutusV2Script(bytes.fromhex(script_hex))
-    script_hash = plutus_script_hash(script)
-    script_address = Address(script_hash, network=utils.GLOBAL_network)
-
-    return script, script_address
-
-
 def add_funds_to_gift_contract(gift_script_address, giver_address, giver_skey, datum_hash, amount):
     # build transaction for sending funds and datum to script address
     builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
@@ -84,7 +74,7 @@ if __name__ == "__main__":
     # redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
 
     # create smart contract address
-    gift_script, gift_script_address = create_script_and_address()
+    gift_script, gift_script_address = utils.create_script_and_address()
     # add funds to gift script
     # add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
     # retrieve funds from gift script
