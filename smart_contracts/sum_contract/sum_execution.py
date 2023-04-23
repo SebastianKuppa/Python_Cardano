@@ -22,5 +22,5 @@ if __name__ == '__main__':
     # create redeemer
     redeemer = 40
 
-    # create smart contract address
-    gift_script, gift_script_address = create_script_and_address()
+    # get smart contract address on testnet
+    sum_script_address = utils.get_script_address("./build/sum_validator/testnet.addr")

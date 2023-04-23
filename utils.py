@@ -58,9 +58,17 @@ def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/g
         script_hex = f.read()
     script = PlutusV2Script(bytes.fromhex(script_hex))
     script_hash = plutus_script_hash(script)
-    script_address = Address(script_hash, network=GLOBAL_network)
+    script_address = Address(payment_part=script_hash, payment_credential=None, network=GLOBAL_network)
 
     return script, script_address
+
+
+def get_script_address(script_path="./build/sum_validator/testnet.addr"):
+    script_path = pathlib.Path(script_path)
+    # Load script info
+    with open(script_path) as f:
+        script_address = pycardano.Address.from_primitive(f.read())
+    return script_address
 
 
 def get_address(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
