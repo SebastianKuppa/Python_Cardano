@@ -1,6 +1,6 @@
 import pathlib
 
-from smart_contracts.gift_contract import gift
+from smart_contracts.gift_contract import gift_validator
 import pycardano
 from opshin.prelude import *
 from pycardano import PlutusV2Script, plutus_script_hash, Address
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                                                                      verification_key_path="/home/sk/PycharmProjects/Python_Cardano/keys/taker/payment.vkey")
 
     # init datum
-    datum = gift.CancelDatum(taker_vkey.hash().to_primitive())
+    datum = gift_validator.CancelDatum(taker_vkey.hash().to_primitive())
     datum_hash = pycardano.datum_hash(datum)
     # create an empty redeemer, because it needs to be passed to the script transaction, but it has no
     # needed information for the script
