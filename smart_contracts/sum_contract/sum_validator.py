@@ -1,6 +1,6 @@
 from opshin.prelude import *
 
 
-def validator(datum: int, redeemer: Redeemer, context: ScriptContext) -> None:
+def validator(datum: int, redeemer: int, context: ScriptContext) -> None:
     
-    assert datum + redeemer.data == 42, "Sum of datum and redeemer is not 42."
+    assert datum + redeemer == 42, "Sum of datum and redeemer is not 42."

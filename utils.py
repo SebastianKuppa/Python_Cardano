@@ -158,7 +158,8 @@ def add_funds_and_datum_to_contract(script_address, giver_address, giver_skey, d
     # add gift_script as transaction output
     builder.add_output(pycardano.TransactionOutput(script_address,
                                                    amount,
-                                                   datum=datum))
+                                                   datum=datum,
+                                                   datum_hash=pycardano.datum_hash(datum)))
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # submit transaction
@@ -166,4 +167,6 @@ def add_funds_and_datum_to_contract(script_address, giver_address, giver_skey, d
     transaction_fee = pycardano.fee(GLOBAL_context, len(signed_tx.to_cbor("bytes")))
     print(f"Send {amount} lovelace to {script_address} successfully.")
     print(f"The transaction fee was: {transaction_fee} lovelace.")
+    print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
+
 
