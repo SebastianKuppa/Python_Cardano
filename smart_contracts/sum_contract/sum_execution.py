@@ -1,12 +1,18 @@
 import pycardano
-
-import utils
 import pathlib
+from blockfrost import ApiUrls
+import utils
 
+
+# set network
+GLOBAL_network = pycardano.Network.TESTNET
+# API Key for my Google Account on Blockfrost.io
+GLOBAL_context = pycardano.BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf",
+                                                  base_url=ApiUrls.preview.value)
 
 def add_funds_to_sum_contract(script_address, giver_address, giver_skey, datum, amount):
     # build transaction for sending funds and datum to script address
-    builder = pycardano.TransactionBuilder(context=utils.GLOBAL_context)
+    builder = pycardano.TransactionBuilder(context=GLOBAL_context)
     # add giver address as transaction input
     builder.add_input_address(giver_address)
 
@@ -17,17 +23,17 @@ def add_funds_to_sum_contract(script_address, giver_address, giver_skey, datum, 
     # sign the script transaction by giver
     signed_tx = builder.build_and_sign([giver_skey], change_address=giver_address)
     # submit transaction
-    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
-    transaction_fee = pycardano.fee(utils.GLOBAL_context, len(signed_tx.to_cbor("bytes")))
+    GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    transaction_fee = pycardano.fee(GLOBAL_context, len(signed_tx.to_cbor("bytes")))
     print(f"Send {amount} lovelace to {script_address} successfully.")
     print(f"The transaction fee was: {transaction_fee} lovelace.")
 
 
 def taker_takes_gift(script, script_address, datum, redeemer, taker_address, taker_skey, taker_vkey):
     # utxo to spend in order to activate the gift script on chain
-    utxo_to_spend = utils.GLOBAL_context.utxos(str(script_address))[-1]
+    utxo_to_spend = GLOBAL_context.utxos(str(script_address))[-1]
     # init transaction
-    transaction = utils.TransactionBuilder(utils.GLOBAL_context)
+    transaction = pycardano.TransactionBuilder(GLOBAL_context)
     # add smart contract as transaction input
     transaction.add_script_input(utxo_to_spend, script, redeemer=redeemer)
 
@@ -37,7 +43,7 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
     transaction.collaterals.append(non_nft_utxo)
 
     # we must specify at least the start of the tx valid range in slots
-    transaction.validity_start = utils.GLOBAL_context.last_block_slot
+    transaction.validity_start = GLOBAL_context.last_block_slot
     # This specifies the end of tx valid range in slots
     transaction.ttl = transaction.validity_start + 1000
 
@@ -52,7 +58,7 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
     # sign transaction with taker payment_key
     signed_tx = transaction.build_and_sign([taker_skey], taker_address)
     # submit transaction on-chain
-    utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    GLOBAL_context.submit_tx(signed_tx.to_cbor())
     print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
 
 
@@ -79,8 +85,7 @@ if __name__ == '__main__':
 
 
     # send ada with datum to contract
-    # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
-    # TransactionId(hex='9bcf395364f835a2e22605dc0e46139116c44b47ca4f9b619c205110fd51d7d7')
+    utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
     # take funds from contract
-    taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
+    # taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
 
