@@ -76,15 +76,15 @@ def get_script_address_and_script(script_path="./build/sum_validator/"):
 
 
 def get_script_address_and_script_2(script_path="./build/sum_validator/"):
-    script_path = os.path.join(script_path, "script.cbor")
-    with open(script_path) as f:
+    cbor_path = os.path.join(script_path, "script.cbor")
+    with open(cbor_path) as f:
         cbor_hex = f.read()
-
     cbor = bytes.fromhex(cbor_hex)
 
     script = PlutusV2Script(cbor)
     script_hash = plutus_script_hash(script)
     script_address = Address(script_hash, staking_credential=None)
+
     return script, script_address
 
 
