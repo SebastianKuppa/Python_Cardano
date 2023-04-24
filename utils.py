@@ -64,18 +64,18 @@ def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/g
     return script, script_address
 
 
+# def get_script_address_and_script(script_path="./build/sum_validator/"):
+#     script_path = pathlib.Path(script_path)
+#     # Load script info
+#     with open(os.path.join(script_path, 'testnet.addr')) as f:
+#         script_address = pycardano.Address.from_primitive(f.read())
+#     with open(os.path.join(script_path, "script.cbor")) as f:
+#         script_hex = f.read()
+#         script = PlutusV2Script(bytes.fromhex(script_hex))
+#     return script, script_address
+
+
 def get_script_address_and_script(script_path="./build/sum_validator/"):
-    script_path = pathlib.Path(script_path)
-    # Load script info
-    with open(os.path.join(script_path, 'testnet.addr')) as f:
-        script_address = pycardano.Address.from_primitive(f.read())
-    with open(os.path.join(script_path, "script.cbor")) as f:
-        script_hex = f.read()
-        script = PlutusV2Script(bytes.fromhex(script_hex))
-    return script, script_address
-
-
-def get_script_address_and_script_2(script_path="./build/sum_validator/"):
     cbor_path = os.path.join(script_path, "script.cbor")
     with open(cbor_path) as f:
         cbor_hex = f.read()
@@ -83,7 +83,7 @@ def get_script_address_and_script_2(script_path="./build/sum_validator/"):
 
     script = PlutusV2Script(cbor)
     script_hash = plutus_script_hash(script)
-    script_address = Address(script_hash, staking_credential=None)
+    script_address = pycardano.Address(script_hash, network=GLOBAL_network)
 
     return script, script_address
 
