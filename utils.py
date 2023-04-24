@@ -1,3 +1,4 @@
+import os
 import pycardano
 from blockfrost import ApiUrls
 from pycardano import (
@@ -63,12 +64,14 @@ def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/g
     return script, script_address
 
 
-def get_script_address_and_script(script_path="./build/sum_validator/testnet.addr"):
+def get_script_address_and_script(script_path="./build/sum_validator/"):
     script_path = pathlib.Path(script_path)
     # Load script info
-    with open(script_path) as f:
+    with open(os.path.join(script_path, 'testnet.addr')) as f:
         script_address = pycardano.Address.from_primitive(f.read())
-        script = PlutusV2Script(bytes.fromhex(f.read()))
+    with open(os.path.join(script_path, "script.cbor")) as f:
+        script_hex = f.read()
+        script = PlutusV2Script(bytes.fromhex(script_hex))
     return script, script_address
 
 
