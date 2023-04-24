@@ -18,12 +18,12 @@ from pycardano import (
     plutus_script_hash
 )
 from opshin.prelude import *
-import pathlib
+from keys.api import BLOCKFROST_API
 
 # set network
 GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
-GLOBAL_context = BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf", base_url=ApiUrls.preview.value)
+GLOBAL_context = BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.preview.value)
 
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):

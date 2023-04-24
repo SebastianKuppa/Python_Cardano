@@ -3,11 +3,13 @@ import pathlib
 from blockfrost import ApiUrls
 import utils
 
+from keys.api import BLOCKFROST_API
+
 
 # set network
 GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
-GLOBAL_context = pycardano.BlockFrostChainContext("previeweD6696Lpx1kz0cLHF7UanRvb6plg0uXf",
+GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API,
                                                   base_url=ApiUrls.preview.value)
 
 
@@ -76,7 +78,7 @@ if __name__ == '__main__':
     taker_vkey_abs_path = pathlib.Path("../../keys/taker/payment.vkey").absolute()
     taker_skey, taker_vkey, taker_addr = utils.load_keys_and_address(signing_key_path=taker_skey_abs_path,
                                                                      verification_key_path=taker_vkey_abs_path)
-    # create datum and its hash
+    # create datum
     datum = 22
 
     # create redeemer
