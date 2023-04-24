@@ -75,6 +75,19 @@ def get_script_address_and_script(script_path="./build/sum_validator/"):
     return script, script_address
 
 
+def get_script_address_and_script_2(script_path="./build/sum_validator/"):
+    script_path = os.path.join(script_path, "script.cbor")
+    with open(script_path) as f:
+        cbor_hex = f.read()
+
+    cbor = bytes.fromhex(cbor_hex)
+
+    script = PlutusV2Script(cbor)
+    script_hash = plutus_script_hash(script)
+    script_address = Address(script_hash, staking_credential=None)
+    return script, script_address
+
+
 def get_address(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
     _, payment_verification_key, _ = load_keys_and_address(signing_key_path=signing_key_path,
                                                            verification_key_path=verification_key_path)

@@ -85,10 +85,11 @@ if __name__ == '__main__':
 
     # get smart contract address on testnet
     sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator")
-
+    sum_script2, sum_script_address2 = utils.get_script_address_and_script_2("./build/sum_validator")
 
     # send funds with datum to contract
     # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
+
     # take funds with redeemer from contract
     taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
 
