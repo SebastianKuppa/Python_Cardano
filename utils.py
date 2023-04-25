@@ -54,16 +54,6 @@ def create_address():
     print(f'Created address: {address}')
 
 
-def create_script_and_address(cbor_file="./smart_contracts/gift_contract/build/gift/script.cbor"):
-    with open(cbor_file, "r") as f:
-        script_hex = f.read()
-    script = PlutusV2Script(bytes.fromhex(script_hex))
-    script_hash = plutus_script_hash(script)
-    script_address = Address(payment_part=script_hash, payment_credential=None, network=GLOBAL_network)
-
-    return script, script_address
-
-
 # def get_script_address_and_script(script_path="./build/sum_validator/"):
 #     script_path = pathlib.Path(script_path)
 #     # Load script info

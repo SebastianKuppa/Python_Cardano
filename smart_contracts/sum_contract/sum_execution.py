@@ -11,6 +11,7 @@ GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
 GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API,
                                                   base_url=ApiUrls.preview.value)
+# ogmios_context = pycardano.OgmiosChainContext(ws_url=, network=pycardano.Network.TESTNET)
 
 
 def add_funds_to_sum_contract(script_address, giver_address, giver_skey, datum, amount):
