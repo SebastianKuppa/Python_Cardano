@@ -1,6 +1,6 @@
 import os
 import pycardano
-from blockfrost import ApiUrls
+from blockfrost import ApiUrls, api
 from pycardano import (
     PaymentSigningKey,
     BlockFrostChainContext,
@@ -19,6 +19,8 @@ from pycardano import (
 )
 from opshin.prelude import *
 from keys.api import BLOCKFROST_API
+
+import cbor2
 
 # set network
 GLOBAL_network = pycardano.Network.TESTNET
@@ -70,9 +72,9 @@ def get_script_address_and_script(script_path="./build/sum_validator/"):
     with open(cbor_path) as f:
         cbor_hex = f.read()
     cbor = bytes.fromhex(cbor_hex)
-
     script = PlutusV2Script(cbor)
     script_hash = plutus_script_hash(script)
+    script = PlutusV2Script(cbor2.loads(bytes.fromhex(pycardano.BlockFrostChainContext.api.script_cbor(script_hash).cbor)))
     script_address = pycardano.Address(script_hash, network=GLOBAL_network)
 
     return script, script_address
