@@ -81,9 +81,9 @@ def get_script_address_and_script(script_path):
         script_hex = f.read()
     script = PlutusV2Script(bytes.fromhex(script_hex))
     script_hash = plutus_script_hash(script)
+    print(f"Created script with script_hash: {script_hash}")
     script_address = pycardano.Address(script_hash, network=pycardano.Network.TESTNET)
-    script = PlutusV2Script(bytes.fromhex(script_hex))
-    print(f"Created script with script_hash: {plutus_script_hash(script)}")
+
     return script, script_address
 
 

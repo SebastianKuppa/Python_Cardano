@@ -90,4 +90,3 @@ if __name__ == '__main__':
 
     # take funds with redeemer from contract
     taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
-
