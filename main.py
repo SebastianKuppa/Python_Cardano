@@ -22,7 +22,7 @@ if __name__ == '__main__':
           f"contains {input_address_ada_amount} ADA")
     print(f"output_address: {output_address}, "
           f"contains {output_address_ada_amount} ADA)")
-    _, script_address = utils.get_script_address_and_script("./smart_contracts/gift_contract/build/gift_validator/script.cbor")
+    _, script_address = utils.get_script_address_and_script("./smart_contracts/sum_contract/build/sum_validator/script.cbor")
     utils.print_utxos_from_address(script_address)
     # execute transaction between input and output addresses
     # transaction_cbor = utils.simple_send_transaction(input_address, output_address, send_amount=100_000_000)

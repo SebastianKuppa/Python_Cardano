@@ -1,8 +1,8 @@
 import pycardano
 import pathlib
 from blockfrost import ApiUrls
-import utils
 
+import utils
 from keys.api import BLOCKFROST_API
 
 
@@ -44,14 +44,9 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
     non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
     # add colleteral to address
     transaction.collaterals.append(non_nft_utxo)
-
     # add taker as required signer
     transaction.required_signers = [taker_vkey.hash()]
 
-    # add taker as required signer
-    # transaction.required_signers = [taker_vkey.hash()]
-    # get estimated transaction fee
-    min_transaction_fee = transaction._estimate_fee()
     # add taker_address as transaction output
     # take_output = pycardano.TransactionOutput(taker_address, amount=1_000_000)
     # transaction.add_output(take_output)
@@ -60,6 +55,7 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
     signed_tx = transaction.build_and_sign([taker_skey], taker_address)
     # submit transaction on-chain
     GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print("Transaction was signed and submitted.")
     print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
 
 
@@ -76,15 +72,12 @@ if __name__ == '__main__':
                                                                      verification_key_path=taker_vkey_abs_path)
     # create datum
     datum = 22
-
     # create redeemer
-    # redeemer = 20
     redeemer = pycardano.Redeemer(data=20)
 
     # get smart contract address on testnet
     sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator/script.cbor")
-    # sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator")
-    # test = hex()
+
     # send funds with datum to contract
     # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
 

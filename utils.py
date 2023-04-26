@@ -59,7 +59,7 @@ def create_address():
     print(f'Created address: {address}')
 
 
-def get_script_address_and_script_2(script_path="./build/sum_validator/"):
+def get_script_address_and_script_WIP(script_path="./build/sum_validator/"):
     cbor_path = os.path.join(script_path, "script.cbor")
     with open(cbor_path) as f:
         cbor_hex = f.read()

@@ -1,10 +1,7 @@
 import pathlib
+import pycardano
 
 from smart_contracts.gift_contract import gift_validator
-import pycardano
-from opshin.prelude import *
-from pycardano import PlutusV2Script, plutus_script_hash, Address
-
 import utils
 
 
@@ -37,19 +34,20 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     redeem_gift_transaction.add_script_input(utxo_to_spend, gift_script, datum=datum, redeemer=redeemer)
     # get non_nft utxo from take address in order to provide the transaction collateral
     non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
-    # add colleteral to address
+    # add collateral to address
     redeem_gift_transaction.collaterals.append(non_nft_utxo)
     # add taker as required signer
     redeem_gift_transaction.required_signers = [taker_vkey.hash()]
-    # get estimated transaction fee
-    min_transaction_fee = redeem_gift_transaction._estimate_fee()
+
     # add taker_address as transaction output
     take_output = pycardano.TransactionOutput(taker_address, 1_000_000)
     # redeem_gift_transaction.add_output(take_output)
+
     # sign transaction with taker payment_key
     signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], taker_address)
     # submit transaction on-chain
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print("Transaction was signed and submitted.")
     print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
 
 
