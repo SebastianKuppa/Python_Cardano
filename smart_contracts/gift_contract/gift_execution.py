@@ -25,6 +25,7 @@ def add_funds_to_gift_contract(script_address, giver_address, giver_skey, datum_
     transaction_fee = pycardano.fee(utils.GLOBAL_context, len(signed_tx.to_cbor("bytes")))
     print(f"Send {amount} lovelace to {script_address} successfully.")
     print(f"The transaction fee was: {transaction_fee} lovelace.")
+    print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
 
 
 def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_address, taker_skey, taker_vkey, giver_address):
@@ -34,7 +35,6 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     redeem_gift_transaction = utils.TransactionBuilder(utils.GLOBAL_context)
     # add smart contract as transaction input
     redeem_gift_transaction.add_script_input(utxo_to_spend, gift_script, datum=datum, redeemer=redeemer)
-
     # get non_nft utxo from take address in order to provide the transaction collateral
     non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
     # add colleteral to address
@@ -47,9 +47,10 @@ def taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_ad
     take_output = pycardano.TransactionOutput(taker_address, 1_000_000)
     # redeem_gift_transaction.add_output(take_output)
     # sign transaction with taker payment_key
-    signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], giver_address)
+    signed_tx = redeem_gift_transaction.build_and_sign([taker_skey], taker_address)
     # submit transaction on-chain
     utils.GLOBAL_context.submit_tx(signed_tx.to_cbor())
+    print(f"Cardanoscan: https://preview.cexplorer.io/tx/{signed_tx.id}")
 
 
 if __name__ == "__main__":
@@ -73,8 +74,8 @@ if __name__ == "__main__":
     # redeemer = pycardano.Redeemer(data=PlutusData(), tag=pycardano.RedeemerTag.SPEND)
 
     # create smart contract address
-    gift_script, gift_script_address = utils.create_script_and_address()
+    gift_script, gift_script_address = utils.get_script_address_and_script("/home/sk/PycharmProjects/Python_Cardano/smart_contracts/gift_contract/build/gift_validator/script.cbor")
     # add funds to gift script
-    add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
+    # add_funds_to_gift_contract(gift_script_address, giver_addr, giver_skey, datum_hash, amount=6_000_000)
     # retrieve funds from gift script
-    # taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey, giver_addr)
+    taker_takes_gift(gift_script, gift_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey, giver_addr)

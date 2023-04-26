@@ -37,9 +37,9 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
     # utxo to spend in order to activate the gift script on chain
     utxo_to_spend = GLOBAL_context.utxos(str(script_address))[-1]
     # init transaction
-    transaction = pycardano.TransactionBuilder(GLOBAL_context)
+    transaction = utils.TransactionBuilder(GLOBAL_context)
     # add smart contract as transaction input
-    transaction.add_script_input(utxo=utxo_to_spend, script=script, redeemer=redeemer)
+    transaction.add_script_input(utxo=utxo_to_spend, script=script, datum=datum, redeemer=redeemer)
     # get non_nft utxo from take address in order to provide the transaction collateral
     non_nft_utxo = utils.check_for_non_nft_utxo_at_address(taker_address)
     # add colleteral to address
@@ -47,11 +47,6 @@ def taker_takes_gift(script, script_address, datum, redeemer, taker_address, tak
 
     # add taker as required signer
     transaction.required_signers = [taker_vkey.hash()]
-
-    # we must specify at least the start of the tx valid range in slots
-    transaction.validity_start = GLOBAL_context.last_block_slot
-    # This specifies the end of tx valid range in slots
-    transaction.ttl = transaction.validity_start + 1000
 
     # add taker as required signer
     # transaction.required_signers = [taker_vkey.hash()]
@@ -87,8 +82,8 @@ if __name__ == '__main__':
     redeemer = pycardano.Redeemer(data=20)
 
     # get smart contract address on testnet
+    sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator/script.cbor")
     # sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator")
-    sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator")
     # test = hex()
     # send funds with datum to contract
     # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)

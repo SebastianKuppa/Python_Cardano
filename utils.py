@@ -1,5 +1,6 @@
 import os
 import pycardano
+import blockfrost
 from blockfrost import ApiUrls, api
 from pycardano import (
     PaymentSigningKey,
@@ -21,11 +22,13 @@ from opshin.prelude import *
 from keys.api import BLOCKFROST_API
 
 import cbor2
+import pathlib
 
 # set network
 GLOBAL_network = pycardano.Network.TESTNET
 # API Key for my Google Account on Blockfrost.io
 GLOBAL_context = BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.preview.value)
+blockfrost_api = blockfrost.api.BlockFrostApi(BLOCKFROST_API, base_url=ApiUrls.preview.value)
 
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
@@ -56,27 +59,31 @@ def create_address():
     print(f'Created address: {address}')
 
 
-# def get_script_address_and_script(script_path="./build/sum_validator/"):
-#     script_path = pathlib.Path(script_path)
-#     # Load script info
-#     with open(os.path.join(script_path, 'testnet.addr')) as f:
-#         script_address = pycardano.Address.from_primitive(f.read())
-#     with open(os.path.join(script_path, "script.cbor")) as f:
-#         script_hex = f.read()
-#         script = PlutusV2Script(bytes.fromhex(script_hex))
-#     return script, script_address
-
-
-def get_script_address_and_script(script_path="./build/sum_validator/"):
+def get_script_address_and_script_2(script_path="./build/sum_validator/"):
     cbor_path = os.path.join(script_path, "script.cbor")
     with open(cbor_path) as f:
         cbor_hex = f.read()
     cbor = bytes.fromhex(cbor_hex)
     script = PlutusV2Script(cbor)
+    print(f"script_hash: {plutus_script_hash(script)}")
+    # script_hash: 60372aaf3c2482849de960d716252d2f0ea779a5d6aed549f5e5768b
     script_hash = plutus_script_hash(script)
-    script = PlutusV2Script(cbor2.loads(bytes.fromhex(pycardano.BlockFrostChainContext.api.script_cbor(script_hash).cbor)))
+    # script = PlutusV2Script(cbor2.loads(bytes.fromhex(GLOBAL_context.api.script_cbor(script_hash).cbor)))
+    script = PlutusV2Script(bytes.fromhex(GLOBAL_context.api.script_cbor(script_hash=script_hash).cbor))
     script_address = pycardano.Address(script_hash, network=GLOBAL_network)
 
+    return script, script_address
+
+
+def get_script_address_and_script(script_path):
+    print(f"reading cbor file from {script_path}")
+    with open(script_path) as f:
+        script_hex = f.read()
+    script = PlutusV2Script(bytes.fromhex(script_hex))
+    script_hash = plutus_script_hash(script)
+    script_address = pycardano.Address(script_hash, network=pycardano.Network.TESTNET)
+    script = PlutusV2Script(bytes.fromhex(script_hex))
+    print(f"Created script with script_hash: {plutus_script_hash(script)}")
     return script, script_address
 
 

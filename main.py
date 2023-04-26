@@ -1,8 +1,14 @@
+from blockfrost import ApiUrls
+import blockfrost
+import pycardano
+from keys.api import BLOCKFROST_API
 import utils
+
+GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.preview.value)
 
 
 if __name__ == '__main__':
-    print(f"Current protocol params: {utils.GLOBAL_context.protocol_param}")
+    # print(f"Current protocol params: {GLOBAL_context.api.block_latest}")
     # get address from digital signatures
     input_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
                                       verification_key_path="./keys/giver/payment.vkey")
@@ -16,7 +22,7 @@ if __name__ == '__main__':
           f"contains {input_address_ada_amount} ADA")
     print(f"output_address: {output_address}, "
           f"contains {output_address_ada_amount} ADA)")
-    _, script_address = utils.get_script_address_and_script("./smart_contracts/sum_contract/build/sum_validator/testnet.addr")
+    _, script_address = utils.get_script_address_and_script("./smart_contracts/gift_contract/build/gift_validator/script.cbor")
     utils.print_utxos_from_address(script_address)
     # execute transaction between input and output addresses
     # transaction_cbor = utils.simple_send_transaction(input_address, output_address, send_amount=100_000_000)
