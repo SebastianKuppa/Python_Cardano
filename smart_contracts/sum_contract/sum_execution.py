@@ -36,6 +36,7 @@ def add_funds_to_sum_contract(script_address, giver_address, giver_skey, datum, 
 def taker_takes_gift(script, script_address, datum, redeemer, taker_address, taker_skey, taker_vkey):
     # utxo to spend in order to activate the gift script on chain
     utxo_to_spend = GLOBAL_context.utxos(str(script_address))[-1]
+    test = utxo_to_spend.output.datum_hash
     # init transaction
     transaction = utils.TransactionBuilder(GLOBAL_context)
     # add smart contract as transaction input
@@ -79,7 +80,7 @@ if __name__ == '__main__':
     sum_script, sum_script_address = utils.get_script_address_and_script("./build/sum_validator/script.cbor")
 
     # send funds with datum to contract
-    # utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
+    utils.add_funds_and_datum_to_contract(sum_script_address, giver_addr, giver_skey, datum, amount=2_000_000)
 
     # take funds with redeemer from contract
-    taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)
+    # taker_takes_gift(sum_script, sum_script_address, datum, redeemer, taker_addr, taker_skey, taker_vkey)

@@ -45,6 +45,7 @@ def load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
     payment_signing_key = pycardano.PaymentSigningKey.load(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.load(verification_key_path)
     payment_address = pycardano.Address(payment_part=payment_verification_key.hash(), network=GLOBAL_network)
+    print(f"payment_verification_key.hash(): {payment_verification_key.hash()}")
     print(f'Loaded address: {payment_address}')
     return payment_signing_key, payment_verification_key, payment_address
 
@@ -83,6 +84,7 @@ def get_script_address_and_script(script_path):
     script_hash = plutus_script_hash(script)
     print(f"Created script with script_hash: {script_hash}")
     script_address = pycardano.Address(script_hash, network=pycardano.Network.TESTNET)
+    print(f"Script address: {script_address}")
 
     return script, script_address
 
