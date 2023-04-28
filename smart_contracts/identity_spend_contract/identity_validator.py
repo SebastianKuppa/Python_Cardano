@@ -3,15 +3,15 @@ from opshin.prelude import *
 
 @dataclass
 class IdentityDatum(PlutusData):
-    first_name: str
-    family_name: str
+    first_name: bytes
+    family_name: bytes
     age: int
 
 
 @dataclass
 class IdentityRedeemer(PlutusData):
-    first_name: str
-    family_name: str
+    first_name: bytes
+    family_name: bytes
     age: int
 
 
