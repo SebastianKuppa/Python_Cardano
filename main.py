@@ -1,4 +1,5 @@
 from blockfrost import ApiUrls
+import pandas
 import blockfrost
 import pycardano
 
@@ -9,11 +10,15 @@ GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUr
 
 
 if __name__ == '__main__':
+    # start with API check
+    utils.init_check()
+
     test_address = 'addr1q9lu5yyrwu3uf3v647y78n0jh9c4svvt3acszfttm0dp4ftffc7dx4nw7h7wvg8msu5mdqegf2hnsa5e5z9vzs7ptqfsceeesr'
     test = GLOBAL_context.api.address(test_address, return_type="json")
     script_hash = '71a65ca58a4e9c755fa830173d2a5caed458ac0c73f97db7faae2e7e3b'
-    test2 = GLOBAL_context.api.script(script_hash)
-    print(f"Current protocol params: {GLOBAL_context.api.blocks_next}")
+    # test2 = GLOBAL_context.api.script(script_hash=script_hash)
+    test3 = GLOBAL_context.api.scripts(return_type='json')
+    print(f"Current protocol params: {GLOBAL_context.api.block_latest()}")
     # get address from digital signatures
     input_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
                                       verification_key_path="./keys/giver/payment.vkey")
