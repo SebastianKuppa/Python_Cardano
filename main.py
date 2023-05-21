@@ -1,10 +1,11 @@
 from blockfrost import ApiUrls
 import blockfrost
 import pycardano
+
 from keys.api import BLOCKFROST_API
 import utils
 
-GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.preview.value)
+GLOBAL_context = pycardano.BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.mainnet.value)
 
 
 if __name__ == '__main__':

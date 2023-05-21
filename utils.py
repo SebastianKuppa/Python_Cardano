@@ -25,9 +25,9 @@ import cbor2
 import pathlib
 
 # set network
-GLOBAL_network = pycardano.Network.TESTNET
+GLOBAL_network = pycardano.Network.MAINNET
 # API Key for my Google Account on Blockfrost.io
-GLOBAL_context = BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.preview.value)
+GLOBAL_context = BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.mainnet.value)
 blockfrost_api = blockfrost.api.BlockFrostApi(BLOCKFROST_API, base_url=ApiUrls.preview.value)
 
 

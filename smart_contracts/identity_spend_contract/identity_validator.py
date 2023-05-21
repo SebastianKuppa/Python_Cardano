@@ -3,6 +3,7 @@ from opshin.prelude import *
 
 @dataclass
 class IdentityDatum(PlutusData):
+    CONSTR_ID = 0
     first_name: bytes
     family_name: bytes
     age: int
@@ -10,6 +11,7 @@ class IdentityDatum(PlutusData):
 
 @dataclass
 class IdentityRedeemer(PlutusData):
+    CONSTR_ID = 1
     first_name: bytes
     family_name: bytes
     age: int
