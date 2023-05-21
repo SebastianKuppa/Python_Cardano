@@ -28,7 +28,20 @@ import pathlib
 GLOBAL_network = pycardano.Network.MAINNET
 # API Key for my Google Account on Blockfrost.io
 GLOBAL_context = BlockFrostChainContext(BLOCKFROST_API, base_url=ApiUrls.mainnet.value)
-api = blockfrost.api.BlockFrostApi(BLOCKFROST_API, base_url=ApiUrls.preview.value)
+api = blockfrost.api.BlockFrostApi(BLOCKFROST_API, base_url=ApiUrls.mainnet.value)
+
+
+def get_onchain_address(address):
+    try:
+        address = api.address(
+            address=address)
+        print(address.type)
+        for amount in address.amount:
+            print(amount.quantity, amount.unit)
+
+    except ApiError as e:
+        print(e)
+    return address
 
 
 def init_check():
@@ -64,6 +77,7 @@ def init_check():
 
     except ApiError as e:
         print(e)
+
 
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
