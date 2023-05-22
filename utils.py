@@ -32,6 +32,14 @@ api = blockfrost.api.BlockFrostApi(BLOCKFROST_API, base_url=ApiUrls.mainnet.valu
 
 
 def get_onchain_address(address):
+    """Gets the on-chain info for a given address.
+
+        Args:
+            address (str): The address to get the on-chain address for.
+
+        Returns:
+            str: The on-chain address.
+    """
     try:
         address = api.address(
             address=address)
@@ -45,6 +53,11 @@ def get_onchain_address(address):
 
 
 def init_check():
+    """Checks the health of the Cardano network.
+
+        Returns:
+            None
+    """
     try:
         health = api.health()
         print(health)  # prints object:    HealthResponse(is_healthy=True)
@@ -79,8 +92,16 @@ def init_check():
         print(e)
 
 
-
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
+    """Generates a new payment signing key and saves it to a file.
+
+        Args:
+            signing_key_path (str): The path to the file to save the signing key to.
+            verification_key_path (str): The path to the file to save the verification key to.
+
+        Returns:
+            tuple(PaymentSigningKey, PaymentVerificationKey): The generated signing key and verification key.
+    """
     payment_signing_key = pycardano.PaymentSigningKey.generate()
     payment_signing_key.save(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.from_signing_key(payment_signing_key)
