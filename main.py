@@ -18,9 +18,9 @@ if __name__ == '__main__':
     address = utils.get_onchain_address(test_address)
 
     test = GLOBAL_context.api.address(test_address, return_type="json")
-    script_hash = '71a65ca58a4e9c755fa830173d2a5caed458ac0c73f97db7faae2e7e3b'
-    # test2 = GLOBAL_context.api.script(script_hash=script_hash)
-    test3 = GLOBAL_context.api.scripts(return_type='json')
+    script_hash = '65c197d565e88a20885e535f93755682444d3c02fd44dd70883fe89e'
+    list_of_scripts = GLOBAL_context.api.scripts(return_type='json')
+    specific_script = GLOBAL_context.api.script(script_hash=list_of_scripts[0]['script_hash'], return_type='json')
     print(f"Current protocol params: {GLOBAL_context.api.block_latest()}")
     # get address from digital signatures
     input_address = utils.get_address(signing_key_path="./keys/giver/payment.skey",
