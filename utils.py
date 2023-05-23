@@ -54,9 +54,8 @@ def get_onchain_address(address):
 
 def init_check():
     """Checks the health of the Cardano network.
-
-        Returns:
-            None
+    Returns:
+        None
     """
     try:
         health = api.health()
@@ -94,13 +93,12 @@ def init_check():
 
 def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_key_path="./keys/payment.vkey"):
     """Generates a new payment signing key and saves it to a file.
+    Args:
+        signing_key_path (str): The path to the file to save the signing key to.
+        verification_key_path (str): The path to the file to save the verification key to.
 
-        Args:
-            signing_key_path (str): The path to the file to save the signing key to.
-            verification_key_path (str): The path to the file to save the verification key to.
-
-        Returns:
-            tuple(PaymentSigningKey, PaymentVerificationKey): The generated signing key and verification key.
+    Returns:
+        tuple(PaymentSigningKey, PaymentVerificationKey): The generated signing key and verification key.
     """
     payment_signing_key = pycardano.PaymentSigningKey.generate()
     payment_signing_key.save(signing_key_path)
@@ -112,6 +110,18 @@ def generate_and_save_keys(signing_key_path="./keys/payment.skey", verification_
 
 def load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
                           verification_key_path="./keys/giver/payment.vkey"):
+    """
+    Load the payment signing key, payment verification key, and payment address.
+
+    Args:
+        signing_key_path (str): Path to the payment signing key file (default: "./keys/giver/payment.skey").
+        verification_key_path (str): Path to the payment verification key file (default: "./keys/giver/payment.vkey").
+
+    Returns:
+        payment_signing_key (pycardano.PaymentSigningKey): Loaded payment signing key.
+        payment_verification_key (pycardano.PaymentVerificationKey): Loaded payment verification key.
+        payment_address (pycardano.Address): Loaded payment address.
+    """
     payment_signing_key = pycardano.PaymentSigningKey.load(signing_key_path)
     payment_verification_key = pycardano.PaymentVerificationKey.load(verification_key_path)
     payment_address = pycardano.Address(payment_part=payment_verification_key.hash(), network=GLOBAL_network)
@@ -121,6 +131,10 @@ def load_keys_and_address(signing_key_path="./keys/giver/payment.skey",
 
 
 def create_address():
+    """
+    Create a new payment signing key, payment verification key, and address.
+    The keys and address are saved to files and printed.
+    """
     payment_signing_key = pycardano.PaymentSigningKey.generate()
     payment_signing_key.save("./keys/payment.skey")
     payment_verification_key = pycardano.PaymentVerificationKey.from_signing_key(payment_signing_key)
@@ -131,6 +145,16 @@ def create_address():
 
 
 def get_script_address_and_script_WIP(script_path="./build/sum_validator/"):
+    """
+    Get the script address and script (work in progress) from the specified script path.
+
+    Args:
+        script_path (str): Path to the script directory (default: "./build/sum_validator/").
+
+    Returns:
+        script (PlutusV2Script): Script object.
+        script_address (pycardano.Address): Script address.
+    """
     cbor_path = os.path.join(script_path, "script.cbor")
     with open(cbor_path) as f:
         cbor_hex = f.read()
